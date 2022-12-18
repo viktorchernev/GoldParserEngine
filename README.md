@@ -17,3 +17,5 @@ Also, I have added grammar readers that can be used to translate .egt files
 contents to JSON and plain text. Those classes are public and can be used 
 separately from the parser in order to view the contents of a compiled 
 grammar files
+
+Needs to be tested further...
