@@ -2,7 +2,7 @@
 This is a rewrite of Devin Cook's GOLD Parser engine. 
 
 I have done this because I wanted to understand the engine well, in order
-to be able to utilise it in some project efficiently, and possibly port
+to be able to utilize it in some project efficiently, and possibly port
 it to JavaScript and/or PHP, if it haven't been ported yet. But that is
 another story.
 
