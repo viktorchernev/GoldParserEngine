@@ -123,9 +123,9 @@ namespace GoldParser.Grammar
 
 			group.TableIndex = groupTableIndex;
 			group.Name = record.Entries[2].GetString();
-			group.Container = grammar.Symbols[record.Entries[3].GetInt().Value];
-			group.Start = grammar.Symbols[record.Entries[4].GetInt().Value];
-			group.End = grammar.Symbols[record.Entries[5].GetInt().Value];
+			group.ContainerSymbol = grammar.Symbols[record.Entries[3].GetInt().Value];
+			group.StartSymbol = grammar.Symbols[record.Entries[4].GetInt().Value];
+			group.EndSymbol = grammar.Symbols[record.Entries[5].GetInt().Value];
 			group.Advance = (GrammarGroupAdvanceMode)record.Entries[6].GetInt().Value;
 			group.Ending = (GrammarGroupEndingMode)record.Entries[7].GetInt().Value;
 			//record.Entries[8] is skipped
@@ -135,9 +135,9 @@ namespace GoldParser.Grammar
 				int nest = record.Entries[9 + j].GetInt().Value;
 				group.Nesting.Add(nest);
 			}
-			group.Container.Group = group;
-			group.Start.Group = group;
-			group.End.Group = group;
+			group.ContainerSymbol.Group = group;
+			group.StartSymbol.Group = group;
+			group.EndSymbol.Group = group;
 
 			grammar.Groups[groupTableIndex] = group;
 		}

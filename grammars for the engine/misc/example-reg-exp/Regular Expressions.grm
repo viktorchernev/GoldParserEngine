@@ -1,0 +1,47 @@
+! -----------------------------------------------------------------------------------
+! Regular Expressions
+!
+! This very simple grammar will parse regular expressions. Unlike the grammar used for
+! the GOLD Parser scanner, this grammar treats each character as a different token.
+!
+! The single quote notation used for characters and Set Names are not standard features
+! in regular expressions.
+!
+! Please visit www.devincook.com/goldparser for additional grammars.
+! -----------------------------------------------------------------------------------
+
+"Name"         = 'Regular Expressions'
+"Author"       = 'Devin Cook'
+"About"        = 'This is the very simple grammar for defining regular expressions'
+
+! All Printable characters in the first 256 of Unicode
+{Printable Full} = {Printable} + {Printable Extended}
+
+{Letter Ch}      = {Printable Full} - ['['']'] - [''] - [*+?(){}|]
+{Set Literal Ch} = {Printable Full} - ['['']'] - ['']
+{Literal Ch}     = {Printable Full} - ['']
+{Set Name Ch}    = {Printable} - [{}]      
+
+Character      = {Letter Ch}  | ''{Literal Ch}''     
+SetLiteral     = '[' ({Set Literal Ch} | '' {Literal Ch}* '' )+ ']'
+SetName        = '{' {Set Name Ch}+ '}'
+
+"Start Symbol" = <Reg Exp> 
+
+! ------------------------------------------------------------------------------------
+
+<Reg Exp> ::= <Reg Exp Items> '|' <Reg Exp>
+            | <Reg Exp Items>
+
+<Reg Exp Items> ::= <Reg Exp Item> <Reg Exp Items>
+                  | <Reg Exp Item>
+
+<Reg Exp Item> ::= Character   <Kleene Opt>
+                 | SetName     <Kleene Opt>
+                 | SetLiteral  <Kleene Opt>
+                 | '(' <Reg Exp> ')' <Kleene Opt>
+
+<Kleene Opt> ::= '+'
+               | '?' 
+               | '*' 
+               |      !Kleene can be null

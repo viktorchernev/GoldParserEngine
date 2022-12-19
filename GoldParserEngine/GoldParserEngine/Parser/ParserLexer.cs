@@ -114,7 +114,7 @@ namespace GoldParser.Parser
 				//TOKEN IS NOT GROUP-START OR IS NOT NESTABLE GROUP-START
 				//WE ARE NOT-NOT IN A GROUP
 				//TOKEN IS GROUP END-ING
-				else if (_GroupStack.Peek().SymbolGroup.End == token.Symbol)
+				else if (_GroupStack.Peek().SymbolGroup.EndSymbol == token.Symbol)
 				{
 					//End the current group
 					Token pop = _GroupStack.Pop();
@@ -130,7 +130,7 @@ namespace GoldParser.Parser
 					//We are out of the group. Return pop'd token (which contains all the group text)
 					if (_GroupStack.Count == 0)
 					{
-						pop.Symbol = pop.SymbolGroup.Container; //Change symbol to symbol of the group
+						pop.Symbol = pop.SymbolGroup.ContainerSymbol; //Change symbol to symbol of the group
 						return pop;
 					}
 					else

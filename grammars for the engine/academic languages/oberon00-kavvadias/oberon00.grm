@@ -1,0 +1,141 @@
+! -----------------------------------------------------------------------
+! Title   : Oberon-00 GOLD parser grammar
+! Version : 0.1.a
+!
+! -----------------------------------------------------------------------
+! -----------------------------------------------------------------------
+! Note: This simple programming language was first suggested in [Wirth98]
+! (see reference below) as a simple example of a common language that can
+! be used for hardware and software compilation. Such language could be
+! used for research purposes in the field of high-level synthesis (HLS)
+! and as a testbed for hardware-software codesign. Oberon-00 is derived
+! as a hardware-friendly subset of Oberon.
+!
+! The following (regular) BNF grammar has been derived from the extended
+! BNF presented by N. Wirth (the author of Pascal) at first in his 
+! June '98 IEEE Computer paper (the referred paper). The specific grammar
+! has some typos which have been corrected in the version currently 
+! available at the Oberon website:
+!
+!   http://wwww.oberon.ethz.ch
+!
+! Here follows the BibTeX entry for this paper:
+!
+! @ARTICLE{Wirth98,
+!  author = {Niklaus Wirth},
+!  month = {June},
+!  year = 1998,
+!  title = {Hardware Compilation: Translating Programs into Circuits},
+!  journal = {IEEE Computer},
+!  volume = 31,
+!  number = 6,
+!  pages = {25--31},
+!  keywords = {unified programming language, Pascal language, Oberon language,
+!  high-level synthesis, hardware compilation, Oberon-00 language}
+!}
+!
+! The notation used in this bibliographic reference just reflects
+! personal style. This applies for the "keywords" entry, too.
+!
+!
+! Author information:
+!     Nikolaos Kavvadias, Ph.D. Student, <nkavv@skiathos.physics.auth.gr>
+!     Electronics Lab
+!     Department of Physics
+!     Aristotle University of Thessaloniki
+!     Thessaloniki
+!     54124, GREECE
+!
+!
+! Modified 31/10/2004
+!   * Translated the Oberon-00 EBNF to a regular BNF in the GOLD parser
+!     style.
+!
+! -----------------------------------------------------------------------
+
+"Name"    = 'Oberon-00'
+"Version" = '0.1.a'
+"Author"  = 'Nikolaos Kavvadias'
+"About"   = 'GOLD parser grammar for the Oberon-00 langauge.'
+"Case Sensitive" = False
+"Start Symbol"   = <module>
+{Sign}           = [+-]
+{Id Head}        = {Letter}
+{Id Tail}        = {Id Head} + {Digit}
+int              = {Sign}*{Digit}+
+ident            = {Id Head}{Id Tail}*
+Comment Start    = '(*'
+Comment End      = '*)'
+
+!=======================================================
+
+<factor> ::= ident
+        | int
+        | TRUE
+        | FALSE
+        | '~' <factor>
+        | ODD <factor>
+        | '(' <expression> ')'
+        | '{' <expression> ':' <expression> ',' <expression> '}'
+
+<term> ::= <factor>
+        | <factor> '*' <factor>
+        | <factor> '/' <factor>
+        | <factor> '&' <factor>
+
+<prefixed_term> ::= <term>
+        | '+' <term>
+        | '-' <term>
+
+<SimpleExpression> ::= <prefixed_term>
+        | <prefixed_term> '+' <term>
+        | <prefixed_term> '-' <term>
+        | <prefixed_term> OR <term>
+
+<expression> ::= <SimpleExpression>
+        | <SimpleExpression> '=' <SimpleExpression>
+        | <SimpleExpression> '#'  <SimpleExpression>
+        | <SimpleExpression> '<'  <SimpleExpression>
+        | <SimpleExpression> '>=' <SimpleExpression>
+        | <SimpleExpression> '<=' <SimpleExpression>
+        | <SimpleExpression> '>'  <SimpleExpression>
+
+<SingleAssignment> ::= ident ':=' <expression>
+
+<assignment> ::= <SingleAssignment>
+        | <assignment> ',' <SingleAssignment>
+
+<IfStatement> ::= IF <expression> THEN <StatementSequence> END
+       | IF <expression> THEN <StatementSequence> ELSE <StatementSequence> END
+
+<WhileStatement> ::= WHILE <expression> DO <StatementSequence> END
+
+<Statement> ::= <assignment>
+        | <IfStatement>
+        | <WhileStatement>
+        | !empty
+
+<StatementSequence> ::= <Statement>
+        | <StatementSequence> ';' <Statement>
+
+<type> ::= BOOLEAN
+        | INTEGER
+
+<identseq> ::= ident
+        | <identseq> ',' ident
+
+<IdentList> ::= <identseq> ':' <type>
+
+
+<IdentListStmt> ::= <IdentList> ';'
+        | <IdentListStmt> <IdentList> ';'
+
+<const_prefix> ::= CONST <IdentListStmt>
+
+<var_suffix> ::= VAR <IdentListStmt>
+
+<declarations> ::= <var_suffix>
+        | <const_prefix> <var_suffix>
+
+<module> ::= MODULE ident ';' <declarations> BEGIN <StatementSequence> END ident '.'
+

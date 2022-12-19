@@ -1,0 +1,81 @@
+
+"Name"    = 'PL/0' 
+"Author"  = 'N. Wirth' 
+"About"   = 'A version of the PL/0 model language.'
+
+"Case Sensitive" = True
+"Start Symbol"   = <program>
+
+Ident   = {Letter}{Alphanumeric}*
+Number  = [123456789]{digit}*
+
+!=========================================================================
+!
+!   This is a version of N. Wirth's model programming language PL/0 as
+! described in the book "Compilerbau" by Peter Baeumle & Heinz Alenfelder
+!
+!=========================================================================
+
+<program>            ::= <block> '.'
+                       |
+
+<block>              ::= <constants> <variables> <procedures> <statement>
+
+<constants>          ::= CONST <constdecl> ';'
+                       |
+
+<constdecl>          ::= <constdef> ',' <constdecl>
+                       | <constdef>
+
+<constdef>           ::= Ident '=' Number
+
+<variables>          ::= VAR <vardecl> ';'
+                       |
+
+<vardecl>            ::= Ident ',' <vardecl>
+                       | Ident
+
+<procedures>         ::= <procdecl> <procedures>
+                       |
+
+<procdecl>           ::= PROCEDURE Ident ';' <block> ';'
+
+<statement>          ::= Ident ':=' <expression>
+                       | CALL Ident
+                       | BEGIN <compound statement> END
+                       | IF <condition> THEN <statement>
+                       | WHILE <condition> DO <statement>
+                       |
+
+<compound statement> ::= <statement> ';' <compound statement>
+                       | <statement>
+
+<condition>          ::= ODD <expression>
+                       | <expression> <relation> <expression>
+
+<relation>           ::= '='
+                       | '#'
+                       | '<'
+                       | '<='
+                       | '>'
+                       | '>='
+
+<expression>         ::= <sign> <term> <terms>
+
+<sign>               ::= '+'
+                       | '-'
+                       |
+
+<terms>              ::= '+' <term>
+                       | '-' <term>
+                       |
+
+<term>               ::= <factor> <factors>
+
+<factors>            ::= '/' <factor>
+                       | '*' <factor>
+                       |
+
+<factor>             ::= Ident
+                       | Number
+                       | '(' <expression> ')'

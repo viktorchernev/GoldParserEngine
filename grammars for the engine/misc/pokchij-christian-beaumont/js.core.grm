@@ -1,0 +1,411 @@
+!-----------------------------------------
+!            Pokchi/J
+!
+!     A JavaScript like language
+!    with some C# like extensions
+!
+!          Copyright 2004
+!        Christian Beaumont
+!
+!      chrisbe@beatbuggy.net
+!
+!     Credits to Ivan M. Krasin
+!
+!-----------------------------------------
+
+!This software is provided 'as-is',
+!without any expressed or implied warranty.
+!
+!In no event will the authors be held liable for
+!any damages arising from the use of this software.
+!Permission is granted to anyone to use this software
+!for any purpose.
+!
+!If you use this software in a product, an acknowledgment
+!in the product documentation would be deeply appreciated
+!but is not required.
+!
+!In the case of the Pokchi/J Grammar source code,
+!permission is granted to anyone to alter it and redistribute
+!it freely, subject to the following restrictions:
+!
+!The origin of this software must not be misrepresented;
+!you must not claim that you wrote the original software. 
+!
+!Altered source versions must be plainly marked as such,
+!and must not be misrepresented as being the original software.
+!
+!This notice may not be removed or altered from any source distribution 
+!
+
+
+
+"Case Sensitive" = true
+"Start Symbol" = <Program>
+
+!--------Comments----------------------
+
+Comment Line = '//'
+Comment Start = '/*'
+Comment End = '*/'
+
+!--------Registered keywords------------
+VarWord = var
+ElseWord = else
+FunctionWord = function
+ReturnWord = return
+BreakWord = break
+ContinueWord = continue
+WhileWord = while
+DoWord = do
+GotoWord = goto
+SwitchWord = switch
+CaseWord = case
+DefaultWord = default
+ForWord = for
+ClassWord = class
+PublicWord = public
+PrivateWord = private
+ProtectedWord = protected
+BaseWord = base
+NewWord = new
+TryWord = try
+CatchWord = catch
+FinallyWord = finally
+ThrowWord = throw
+WithWord = with
+UsingWord = using
+
+!---------Literals--------------------
+DecLiteralTerminal       = ([123456789]{digit}* | 0)
+FloatLiteralTerminal     = {Digit}*.{Digit}+
+
+{StringChar}      = {Printable} - ["]
+{CharChar}        = {Printable} - ['']
+
+StringLiteralTerminalWithQuote    = '"'( {StringChar} | '\'{Printable} )* '"'
+StringLiteralTerminalWithApostroph      = '' ( {CharChar} | '\'{Printable} )*''
+
+<DecLiteral>    ::= DecLiteralTerminal
+<FloatLiteral>  ::= FloatLiteralTerminal
+<StringLiteral> ::= StringLiteralTerminalWithQuote
+<StringLiteral>   ::= StringLiteralTerminalWithApostroph
+
+
+<Literal> ::= <DecLiteral>
+<Literal> ::= <FloatLiteral>
+<Literal> ::= <StringLiteral>
+
+
+!---------Identifier------------------
+{IdentifierStart} = {Letter} + [_] + [$]
+{IdentifierPart} = {IdentifierStart} + {Digit}
+
+
+
+IdentifierName = {IdentifierStart}{IdentifierPart}*
+<Identifier> ::= IdentifierName
+
+!-------- Program body-----------------
+
+<Program> ::= 
+<Program> ::= <SourceElements> 
+<SourceElements> ::= <SourceElement>
+<SourceElements> ::= <SourceElement> <SourceElements> 
+
+<SourceElement> ::= <FunctionDeclaration>
+<SourceElement> ::= <Statement>
+<SourceElement> ::= <ClassDeclaration>
+<SourceElement> ::= <UsingStatement>
+
+!-------------Using------------------
+<UsingStatement> ::= UsingWord <UsingPrefix> ';'
+<UsingPrefix> ::= <SingleUsingPrefix>
+<UsingPrefix> ::= <MultipleUsingPrefix>
+<SingleUsingPrefix> ::= <Identifier>
+<MultipleUsingPrefix> ::= <Identifier> '.' <UsingPrefix> 
+
+
+!--------Function declaration------------
+<FunctionDeclaration> ::= FunctionWord <Identifier> '(' <FunctionParameterList> ')' <Block>
+<FunctionParameterList> ::= <EmptyFunctionParameterList>
+<FunctionParameterList> ::= <NonEmptyFunctionParameterList>
+<NonEmptyFunctionParameterList> ::= <MultipleFunctionParameterList>
+<NonEmptyFunctionParameterList> ::= <SingleFunctionParameterList>
+
+<MultipleFunctionParameterList> ::= <NonEmptyFunctionParameterList> ',' <Identifier> 
+<SingleFunctionParameterList> ::= <Identifier>
+<EmptyFunctionParameterList> ::=
+
+
+
+!--------Statements-----------------------
+
+<StatementList> ::= <Statement>
+<StatementList> ::= <Statement> <StatementList>
+
+<Statement> ::= <VariableStatement>
+<Statement> ::= <IfStatement>
+<Statement> ::= <ThenStatement>
+<Statement> ::= <EmptyStatement>
+<Statement> ::= <IfElseStatement>
+<Statement> ::= <SwitchStatement>
+<Statement> ::= <WithStatement>
+<Statement> ::= <ExceptionStatement>
+<Statement> ::= <Label>
+
+<ThenStatement> ::= <ForStatement>
+<ThenStatement> ::= <ForInStatement>
+<ThenStatement> ::= <WhileStatement>
+<ThenStatement> ::= <DoWhileStatement>
+<ThenStatement> ::= <NormalStatement>
+
+<NormalStatement> ::= <Block>
+<NormalStatement> ::= <ThrowStatement>
+<NormalStatement> ::= <ExpressionStatement>
+<NormalStatement> ::= <ReturnStatement>
+<NormalStatement> ::= <BreakStatement>
+<NormalStatement> ::= <ContinueStatement>
+<NormalStatement> ::= <GotoStatement>
+
+<EmptyStatement> ::= ';'
+<ExpressionStatement> ::= <AssignmentExpression> ';'
+<Block> ::= '{'  '}'
+<Block> ::= '{' <StatementList> '}'
+
+<ExceptionStatement> ::= <TryCatchStatement>
+<ExceptionStatement> ::= <TryFinallyStatement>
+<ExceptionStatement> ::= <TryCatchFinallyStatement>
+
+!---------throw, try, catch, finally----------
+
+<TryCatchStatement> ::= TryWord <Block> CatchWord '(' <Identifier> ')' <CatchPart>
+<TryFinallyStatement> ::= TryWord <Block> FinallyWord <FinallyPart>
+<TryCatchFinallyStatement> ::= TryWord <Block> CatchWord '(' <Identifier> ')' <CatchPart> FinallyWord <FinallyPart>
+<FinallyPart> ::= <Block>
+<CatchPart> ::= <Block>
+
+<ThrowStatement> ::= ThrowWord <Expression> ';'
+
+!----------with------------------------------
+
+<WithStatement> ::= WithWord '(' <Expression> ')' <Block>
+
+!--------return, break, continue-------
+<ReturnStatement> ::= ReturnWord <Expression> ';'
+<ReturnStatement> ::= ReturnWord ';'
+<BreakStatement> ::= BreakWord ';'
+<ContinueStatement> ::= ContinueWord ';'
+
+!--------If-------------
+<IfStatement> ::= if '(' <Expression> ')' <Statement>
+<IfElseStatement> ::= if '(' <Expression> ')' <ThenStatement>  ElseWord <Statement>
+
+!--------Goto------------
+<GotoStatement> ::= GotoWord <Identifier> ';'
+<Label> ::= <Identifier> ':'
+
+!--------Switch-----------
+<SwitchStatement> ::= SwitchWord '(' <Expression> ')' '{' <CaseLabelList> '}'
+<CaseLabelList> ::= <NotEmptyCaseLabelList>
+<CaseLabelList> ::= <DefaultLabel>
+<CaseLabelList> ::= <EmptyCaseLabelList>
+<EmptyCaseLabelList> ::=
+<NotEmptyCaseLabelList> ::= <CaseLabel> <CaseLabelList>
+<CaseLabel> ::= CaseWord <Literal> ':' <StatementList>
+<CaseLabel> ::= CaseWord <Literal> ':'
+<DefaultLabel> ::= DefaultWord ':' <StatementList>
+
+!--------Loops--------------
+<ForStatement> ::= ForWord '(' <FirstForExpression> ';' <SecondForExpression> ';' <ThirdForExpression> ')' <ThenStatement>
+<FirstForExpression> ::= <ForExpression>
+<SecondForExpression> ::= <ForExpression>
+<ThirdForExpression> ::= <ForExpression>
+<ForExpression> ::= <Expression>
+<ForExpression> ::=
+<ForInStatement> ::= ForWord '(' <Identifier> in <Expression> ')' <ThenStatement>
+
+<WhileStatement> ::= WhileWord '(' <Expression> ')' <ThenStatement>
+
+<DoWhileStatement> ::= DoWord <Statement> WhileWord '(' <Expression> ')'
+
+
+!-------Classes-----------
+
+<ClassDeclaration> ::= <SingleClassDeclaration>
+<ClassDeclaration> ::= <DerivedClassDeclaration>
+<SingleClassDeclaration> ::= ClassWord <Identifier> '{' <ClassMembers> '}'
+<DerivedClassDeclaration> ::= ClassWord <Identifier> ':' <BaseClassName> '{' <ClassMembers> '}'
+<BaseClassName> ::= <Identifier>
+<ClassMembers> ::= <NotEmptyClassMembers> 
+<ClassMembers> ::= <EmptyClassMembers>
+<EmptyClassMembers> ::=
+<NotEmptyClassMembers> ::= <ClassMembers> <ClassMember>
+<ClassMember> ::= <MethodDeclaration>
+<ClassMember> ::= <FieldDeclaration>
+<ClassMember> ::= <ConstructorDeclaration>
+!<MethodDeclaration> ::= <AccessModifier> <FunctionDeclaration>
+<MethodDeclaration> ::= <AccessModifier> <Identifier> '(' <FunctionParameterList> ')' <Block>
+<FieldDeclaration> ::= <AccessModifier> <Identifier> ';'
+<ConstructorDeclaration> ::= <AccessModifier> <Identifier> '(' <FunctionParameterList> ')' <BaseConstructorCalling> <Block>
+<BaseConstructorCalling> ::= ':' BaseWord <Arguments>
+
+<AccessModifier> ::= <PublicModifier>
+<AccessModifier> ::= <ProtectedModifier>
+<AccessModifier> ::= <PrivateModifier>
+<PublicModifier> ::= PublicWord
+<ProtectedModifier> ::= ProtectedWord
+<PrivateModifier> ::= PrivateWord
+<PrivateModifier> ::=
+
+<NewExpression> ::= NewWord <Identifier> <Arguments>  
+<VariableStatement> ::= VarWord <VariableDeclarationList> ';'
+<VariableDeclarationList> ::= <SingleVariableDeclarationList>
+<VariableDeclarationList> ::= <MultipleVariableDeclarationList>
+<MultipleVariableDeclarationList> ::= <VariableDeclarationList> ',' <VariableDeclaration>
+<SingleVariableDeclarationList> ::= <VariableDeclaration>
+
+!--------Expressions, Operators
+
+<Expression> ::= <AssignmentExpression>
+<Expression> ::= <VariableExpression>
+
+<VariableExpression> ::= VarWord <VariableDeclaration> 
+<VariableDeclaration> ::= <SingleVariableDeclaration>
+<VariableDeclaration> ::= <UsualVariableDeclaration>
+<UsualVariableDeclaration> ::= <Identifier> '=' <AssignmentExpression>
+<SingleVariableDeclaration> ::= <Identifier>
+
+
+<AssignmentExpression>                  ::= <SingleAssignmentExpression>
+<AssignmentExpression>                  ::= <IfOperation>
+
+<SingleAssignmentExpression>            ::= <SingleAssignmentExpressionEquality>
+<SingleAssignmentExpression>            ::= <SingleAssignmentExpressionPlus>
+<SingleAssignmentExpression>            ::= <SingleAssignmentExpressionMinus>
+<SingleAssignmentExpression>            ::= <SingleAssignmentExpressionMultiply>
+<SingleAssignmentExpression>            ::= <SingleAssignmentExpressionDivide>
+<SingleAssignmentExpression>            ::= <SingleAssignmentExpressionXor>
+<SingleAssignmentExpression>            ::= <SingleAssignmentExpressionBinaryAnd>
+<SingleAssignmentExpression>            ::= <SingleAssignmentExpressionBinaryOr>
+<SingleAssignmentExpression>            ::= <SingleAssignmentExpressionRemainder>
+
+<SingleAssignmentExpressionEquality>    ::= <LeftValue> '='  <AssignmentExpression>
+<SingleAssignmentExpressionPlus>        ::= <LeftValue> '+=' <AssignmentExpression>
+<SingleAssignmentExpressionMinus>       ::= <LeftValue> '-=' <AssignmentExpression>
+<SingleAssignmentExpressionMultiply>    ::= <LeftValue> '*=' <AssignmentExpression>
+<SingleAssignmentExpressionDivide>      ::= <LeftValue> '/=' <AssignmentExpression>
+<SingleAssignmentExpressionXor>         ::= <LeftValue> '^=' <AssignmentExpression>
+<SingleAssignmentExpressionBinaryAnd>   ::= <LeftValue> '&=' <AssignmentExpression>
+<SingleAssignmentExpressionBinaryOr>    ::= <LeftValue> '|=' <AssignmentExpression>
+<SingleAssignmentExpressionRemainder>   ::= <LeftValue> '%=' <AssignmentExpression>
+
+
+<IfOperation>          ::= <OrOperation> '?' <LeftIfOperation> ':' <RightIfOperation>
+<IfOperation>          ::= <OrOperation>
+<LeftIfOperation>      ::= <IfOperation>
+<RightIfOperation>     ::= <IfOperation>
+
+<OrOperation>          ::= <OperatorOr>
+<OrOperation>          ::= <AndOperation>
+<OperatorOr>           ::= <OrOperation> '||' <AndOperation>
+
+<AndOperation>         ::= <OperatorAnd>
+<AndOperation>         ::= <BinOrOperation>
+<OperatorAnd>          ::=  <AndOperation> '&&' <BinOrOperation>
+
+<BinOrOperation>       ::= <OperatorBinaryOr>
+<BinOrOperation>       ::= <BinXorOperation>
+<OperatorBinaryOr>     ::= <BinOrOperation> '|' <BinXorOperation>
+
+<BinXorOperation>      ::= <OperatorBinaryXor>
+<BinXorOperation>      ::= <BinAndOperation>
+<OperatorBinaryXor>    ::= <BinXorOperation> '^' <BinAndOperation>
+
+<BinAndOperation>      ::= <OperatorBinaryAnd>
+<BinAndOperation>      ::= <EquateOperation>
+<OperatorBinaryAnd>    ::= <BinAndOperation> '&' <EquateOperation>
+
+<EquateOperation>      ::= <OperatorEquality>
+<EquateOperation>      ::= <OperatorInequality>
+<EquateOperation>      ::= <CompareOperation>
+<OperatorEquality>     ::= <EquateOperation> '==' <CompareOperation>
+<OperatorInequality>   ::= <EquateOperation> '!=' <CompareOperation>
+
+
+<CompareOperation>     ::= <OperatorLess>
+<CompareOperation>     ::= <OperatorMore>
+<CompareOperation>     ::= <OperatorLessOrEqual>
+<CompareOperation>     ::= <OperatorMoreOrEqual>
+<CompareOperation>     ::= <ShiftOperation>
+<OperatorLess>         ::= <CompareOperation> '<' <ShiftOperation>
+<OperatorMore>         ::= <CompareOperation> '>' <ShiftOperation>
+<OperatorLessOrEqual>  ::= <CompareOperation> '<=' <ShiftOperation>
+<OperatorMoreOrEqual>  ::= <CompareOperation> '>=' <ShiftOperation>
+
+<ShiftOperation>       ::= <OperatorShiftLeft>
+<ShiftOperation>       ::= <OperatorShiftRight> 
+<ShiftOperation>       ::= <AddOperation>
+<OperatorShiftLeft>    ::= <ShiftOperation> '<<' <AddOperation>
+<OperatorShiftRight>   ::= <ShiftOperation> '>>' <AddOperation>
+
+<AddOperation>  ::= <OperatorPlus>
+<AddOperation>  ::= <OperatorMinus>
+<AddOperation>  ::= <MultiplicationOperation>
+<OperatorPlus>  ::= <AddOperation> '+' <MultiplicationOperation>
+<OperatorMinus> ::= <AddOperation> '-' <MultiplicationOperation>
+
+<MultiplicationOperation> ::= <OperatorMultiply>
+<MultiplicationOperation> ::= <OperatorDivide>
+<MultiplicationOperation> ::= <OperatorRemainder>
+<MultiplicationOperation> ::= <OtherOperation>
+<OperatorMultiply>        ::= <MultiplicationOperation> '*' <OtherOperation>
+<OperatorDivide>          ::= <MultiplicationOperation> '/' <OtherOperation>
+<OperatorRemainder>       ::= <MultiplicationOperation> '%' <OtherOperation>
+
+<OtherOperation>          ::= <UnaryOperatorNot>
+<OtherOperation>          ::= <UnaryOperatorBinaryNot>
+<OtherOperation>          ::= <UnaryOperatorPrefixInc>
+<OtherOperation>          ::= <UnaryOperatorPostfixInc>
+<OtherOperation>          ::= <UnaryOperatorPrefixDec>
+<OtherOperation>          ::= <UnaryOperatorPostfixDec>
+<OtherOperation>          ::= <UnaryOperatorMinus>
+<OtherOperation>          ::= <RightValue>
+<UnaryOperatorNot>        ::= '!' <OtherOperation>
+<UnaryOperatorBinaryNot>  ::= '~' <OtherOperation>
+<UnaryOperatorPrefixInc>  ::= '++' <LeftValue>
+<UnaryOperatorPostfixInc> ::= <LeftValue> '++'
+<UnaryOperatorPrefixDec>  ::= '--' <LeftValue>
+<UnaryOperatorPostfixDec> ::= <LeftValue> '--'
+<UnaryOperatorMinus>      ::= '-' <OtherOperation>
+
+<RightValue> ::= <BracedExpression>
+<RightValue> ::= <CallExpression>
+<RightValue> ::= <NewExpression>
+<RightValue> ::= <Literal>
+<RightValue> ::= <LeftValue>
+
+<LeftValue>  ::= <MemberExpression>
+<LeftValue>  ::= <IndexExpression>
+
+
+<PrimaryExpression>  ::= <BracedExpression>
+<PrimaryExpression>  ::= <MemberExpression>
+<PrimaryExpression>  ::= <CallExpression>
+
+<BracedExpression>   ::= '(' <Expression> ')'
+<CallExpression>     ::= <PrimaryExpression> <Arguments>
+<IndexExpression>    ::= <MemberExpression> '[' <Expression> ']'
+
+<MemberExpression>   ::= <SingleMemberExpression>
+<MemberExpression>   ::= <MultipleMemberExpression>
+<MultipleMemberExpression> ::= <PrimaryExpression> '.' <Identifier>
+<SingleMemberExpression> ::= <Identifier>
+
+<Arguments> ::= '(' <ArgumentList> ')'
+
+<ArgumentList> ::= <EmptyArgumentList>
+<ArgumentList> ::= <NonEmptyArgumentList>
+<NonEmptyArgumentList> ::= <NonEmptyArgumentList> ',' <Expression> 
+<NonEmptyArgumentList> ::= <Expression>
+<EmptyArgumentList> ::= 

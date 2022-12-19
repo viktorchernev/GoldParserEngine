@@ -49,7 +49,7 @@ namespace GoldParser.Grammar
 		/// <summary>
 		/// The symbol that represent the group - For example Comment
 		/// </summary>
-		public GrammarSymbol Container
+		public GrammarSymbol ContainerSymbol
 		{ 
 			get; 
 			set; 
@@ -58,7 +58,7 @@ namespace GoldParser.Grammar
 		/// <summary>
 		/// The starting symbol - For example CommentStart - "/*"
 		/// </summary>
-		public GrammarSymbol Start
+		public GrammarSymbol StartSymbol
 		{ 
 			get; 
 			set; 
@@ -67,7 +67,7 @@ namespace GoldParser.Grammar
 		/// <summary>
 		/// The ending symbol - For example CommentEnd - "*/"
 		/// </summary>
-		public GrammarSymbol End
+		public GrammarSymbol EndSymbol
 		{ 
 			get; 
 			set; 

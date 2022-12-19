@@ -250,9 +250,9 @@ namespace GoldParser.Helpers
             json += indent + _indent + "\"table-index\":" + group.TableIndex.ToString() + "," + Environment.NewLine;
             json += indent + _indent + "\"name\":\"" + group.Name + "\"," + Environment.NewLine;
 
-            json += indent + _indent + "\"container-symbol-index\":" + group.Container.TableIndex.ToString() + "," + Environment.NewLine;
-            json += indent + _indent + "\"start-symbol-index\":" + group.Start.TableIndex.ToString() + "," + Environment.NewLine;
-            json += indent + _indent + "\"end-symbol-index\":" + group.End.TableIndex.ToString() + "," + Environment.NewLine;
+            json += indent + _indent + "\"container-symbol-index\":" + group.ContainerSymbol.TableIndex.ToString() + "," + Environment.NewLine;
+            json += indent + _indent + "\"start-symbol-index\":" + group.StartSymbol.TableIndex.ToString() + "," + Environment.NewLine;
+            json += indent + _indent + "\"end-symbol-index\":" + group.EndSymbol.TableIndex.ToString() + "," + Environment.NewLine;
 
             json += indent + _indent + "\"advance-mode\":\"" + group.Advance.ToString() + "\"," + Environment.NewLine;
             json += indent + _indent + "\"ending-mode\":\"" + group.Ending.ToString() + "\"," + Environment.NewLine;
