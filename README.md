@@ -14,3 +14,12 @@ contents to JSON and plain text. Those classes are public and can be found
 in the "GoldParser.Helpers" namespace, and can be used separately from the 
 parser in order to view the contents of compiled grammar files (.egt) - 
 both the file structure and the grammar structure.
+
+The "debug data" folder contaings output information from running those
+reader classes on a custom .egt file, containing the tables for a simple 
+markup language called Describe. Most of the modern programming languages
+like C# or JavaScript will have way larger grammar tables...
+
+The "grammars for the engine" folder contains grammars for the Gold Parser 
+engine written by different people over time and downloaded from the
+original website - https://goldparser.org/
