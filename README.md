@@ -1,21 +1,16 @@
 # GoldParserEngine
 This is a rewrite of Devin Cook's GOLD Parser engine. 
 
-I have done this because I wanted to understand the engine well, in order
-to be able to utilize it in some project efficiently, and possibly port
-it to JavaScript and/or PHP, if it haven't been ported yet. But that is
-another story.
+IlSpy disassembly of version 5.0 have been used, as well as the following 
+repository of user @meziatou - https://github.com/meziantou/GoldParser-Engine/
 
-I have used an IlSpy disassembly of version 5.0 as I wasn't able to find
-up to date source code, as well as @meziatou's version of the engine - 
-https://github.com/meziantou/GoldParser-Engine/ , which is very similar.
+ArrayLists have been replaced to more convenient generic List<T>. 
+Boxing and unboxing have been removed. Codebase have been organised in
+namespaces and some methods and fields have been renamed for clarity sake.
+Documentation comments have been added to all public classes and members.
 
-I have cleaned up the code, added documentation and organized everything
-better into namespaces, and fixed naming of some fields and methods. 
-
-Also, I have added grammar readers that can be used to translate .egt files 
-contents to JSON and plain text. Those classes are public and can be used 
-separately from the parser in order to view the contents of a compiled 
-grammar files
-
-Needs to be tested further...
+Grammar reader classes are added, that can be used to translate .egt files 
+contents to JSON and plain text. Those classes are public and can be found
+in the "GoldParser.Helpers" namespace, and can be used separately from the 
+parser in order to view the contents of compiled grammar files (.egt) - 
+both the file structure and the grammar structure.
