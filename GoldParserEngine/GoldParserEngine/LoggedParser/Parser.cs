@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GoldParser.Parser
+namespace GoldParser.LoggedParser
 {
 	public enum ParseMessage
 	{
@@ -147,7 +147,9 @@ namespace GoldParser.Parser
 		/// <returns></returns>
 		public bool Open(string text)
 		{
-			return Open(new StringReader(text));
+			bool opened = Open(new StringReader(text));
+			Logging.Log("Lexer Opened string for parsing");
+			return opened;
 		}
 
 		/// <summary>
@@ -159,6 +161,7 @@ namespace GoldParser.Parser
 		{
 			Restart();
 			_Source = reader;
+			Logging.Log("Lexer Opened reader for parsing - \"_Source = reader\"");
 
 			Token token = new Token();
 			token.State = _grammar.InitialStates.DfaInitialState;

@@ -7,7 +7,7 @@ using GoldParser.ParseTree;
 using GoldParser.Grammar;
 using System.IO;
 
-namespace GoldParser.Parser
+namespace GoldParser.LoggedParser
 {
     public class ParserLexer : ParserBase
     {
@@ -26,6 +26,7 @@ namespace GoldParser.Parser
 			_GroupStack = new Stack<Token>();
 			_SysPosition = new Position();
 			_LookaheadBuffer = "";
+			Logging.Log("Lexer Created");
 		}
 
 		/// <summary>
@@ -37,8 +38,8 @@ namespace GoldParser.Parser
 			_SysPosition.Column = 0;
 			_SysPosition.Line = 0;
 			_LookaheadBuffer = "";
+			Logging.Log("Lexer Restarted");
 		}
-
 
 
 

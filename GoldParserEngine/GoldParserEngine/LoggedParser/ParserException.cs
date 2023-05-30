@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GoldParser.Parser
+namespace GoldParser.LoggedParser
 {
 	public class ParserException : Exception
 	{
