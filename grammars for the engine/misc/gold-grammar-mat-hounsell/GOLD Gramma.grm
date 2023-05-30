@@ -1,0 +1,121 @@
+!=========================================================================
+! Generalized Outline Language Developer (GOLD)
+! Added Optional New Lines.
+
+"Name"    = 'GOLD Gramma Parser'
+"Version" = '2003 - 02'
+"Author"  = 'Mathew Hounsell'
+"About"   = 'Generalized Outline Language Developer (GOLD) 2.0 Gramma Parser'
+
+!=========================================================================
+"Case Sensitive"      = True
+"Start Symbol"        = <Module>
+
+Comment Line          = '!'
+Comment Start         = '!*'
+Comment End           = '*!'
+
+!=========================================================================
+{WS}                  = {Space} + {HT}
+Whitespace            = {WS}+
+
+EOL                   = {CR}{LF} | {CR} | {LF}
+
+!=========================================================================
+{LiteralStringChar}   = {Printable} + {Printable Extended} - ['']
+LiteralString         = '' {LiteralStringChar}* ''
+
+!=========================================================================
+{IdentifierChar}      = {Letter} + {Digit} + [_]
+
+! True and False are recognized as a TerminalId
+! 'True' and 'False' are recognized as a Literal String
+
+<Identifier>        ::= DirectiveId
+                      | CharacterSetId
+                      | TerminalId
+                      | ProductionId
+
+!=========================================================================
+DirectiveId           = '"' {IdentifierChar}+ ( {Space}+ {IdentifierChar}+ )* '"'
+
+<Directive>         ::= DirectiveId '=' <Directive Body> EOL
+
+<Directive Body>    ::= <Directive Body> EOL '|' <Directive Value>
+                      | <Directive Body> '|' <Directive Value>
+                      | <Directive Value>
+
+<Directive Value>   ::= <Identifier>
+                      | LiteralString
+                      | CharacterSet
+
+!------------------------------------------------------------------------- 
+CharacterSetId        = '{' {IdentifierChar}+ ( {Space}+ {IdentifierChar}+ )* '}' | '{' '#' {Digit}+ '}'
+{CharacterSetChar}    = {Printable} + {Printable Extended} - [''] - ['['']']
+CharacterSet          = '[' ( {CharacterSetChar} | ( '' '' ) | ( '' '[' '' ) | ( '' ']' '' ) )+ ']'
+
+<Character Set>     ::= CharacterSetId '=' <Char Set Body> EOL
+
+<Char Set Body>     ::= <Char Set Body> EOL <Char Set Op> <Char Set Value>
+                      | <Char Set Body> <Char Set Op> <Char Set Value>
+                      | <Char Set Value>
+
+<Char Set Op>       ::= '+'
+                      | '-'
+
+<Char Set Value>    ::= CharacterSetId
+                      | CharacterSet
+
+!-------------------------------------------------------------------------
+TerminalId            = {IdentifierChar}+ ( {Space}+ {IdentifierChar}+ )*
+
+<Terminal>          ::= TerminalId '=' <Regular Expr> EOL
+
+<Regular Expr>      ::= <Regular Expr> EOL '|' <Regular Values>
+                      | <Regular Expr> '|' <Regular Values>
+                      | <Regular Values>
+
+<Regular Values>    ::= <Regular Values> <Regular Operator>
+                      | <Regular Operator>
+                      
+<Regular Operator>  ::= <Regular Element> '+'
+                      | <Regular Element> '*'
+                      | <Regular Element> '?'
+                      | <Regular Element>
+
+<Regular Element>   ::= '(' <Regular Grouped> ')'
+                      | CharacterSetId
+                      | CharacterSet
+                      | LiteralString
+
+<Regular Grouped>   ::= <Regular Grouped> '|' <Regular Values>
+                      | <Regular Values>
+
+!-------------------------------------------------------------------------
+ProductionId          = '<' {IdentifierChar}+ ( {Space}+ {IdentifierChar}+ )* '>'
+
+<Production>        ::= ProductionId '::=' <Production Body> EOL
+
+<Production Body>   ::= <Production Body> EOL '|' <Rule>
+                      | <Production Body> '|' <Rule>
+                      | <Rule>
+
+<Rule>              ::= <Symbols>
+
+<Symbols>           ::= <Symbol> <Symbols>
+                      |
+
+<Symbol>            ::= ProductionId
+                      | TerminalId
+                      | LiteralString
+
+!=========================================================================
+<Module>             ::= <Statement> <Module> 
+                       | <Statement>
+
+<Statement>          ::= <Directive>
+                       | <Character Set>
+                       | <Terminal>
+                       | <Production>
+                       | EOL
+

@@ -1,0 +1,28 @@
+CONST a=5, b=10;
+
+VAR   x,y;
+
+PROCEDURE A;
+  VAR z;
+  PROCEDURE A1;
+    x := b/a;
+  PROCEDURE A2;
+    z := b-a;
+  BEGIN
+    CALL A1;
+    CALL A2;
+    y := x*z
+  END;
+
+PROCEDURE B;
+  CONST c=2;
+  BEGIN
+    WHILE y > c DO
+      y := y/c;
+  END;
+
+BEGIN
+  CALL A;
+  IF x = 2 THEN
+    CALL B
+END.

@@ -1,0 +1,4 @@
+{Byte}              0x70
+{UInt16}            4
+{String}            "Character Set"
+{String}            "Unicode"

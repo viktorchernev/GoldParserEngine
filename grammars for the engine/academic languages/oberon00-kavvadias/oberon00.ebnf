@@ -1,0 +1,21 @@
+Syntax of Oberon-00, expressed in EBNF
+
+ident  =  letter {letter | digit}.
+integer  =  digit {digit}.
+factor  =  ident | integer | "TRUE" | "FALSE" | "~" factor | "ODD" factor |
+  "(" expression ")" | "{" expression ":" expression "," expression "}".
+term  =  factor {("*" | "/" | "&") factor}.
+SimpleExpression  =  ["+"|"-"] term {("+"| "-" | "OR") term}.
+expression  =  SimpleExpression [("=" | "#" | "<" | ">=" | "<=" | ">") SimpleExpression].
+assignment  =  ident ":=" expression {"," ident ":=" expression}.
+IfStatement  =  "IF" expression "THEN" StatementSequence ["ELSE" StatementSequence] "END".
+WhileStatement  =  "WHILE" expression "DO" StatementSequence "END".
+Statement  =  [assignment | IfStatement | WhileStatement].
+StatementSequence  =  Statement {";" Statement}.
+type  =  "BOOLEAN" | "INTEGER".
+IdentList  =  ident {"," ident} ":" type.
+declarations  =  ["CONST" {IdentList ";"}] "VAR" {IdentList ";"}.
+module  =  "MODULE" ident ";" declarations
+  "BEGIN" StatementSequence "END" ident "." .
+
+

@@ -1,0 +1,25 @@
+{
+    "record":
+    {
+        "entry count":4,
+        "entries":
+        [
+            {
+                "type":"Byte",
+                "value":"0x70"
+            },
+            {
+                "type":"UInt16",
+                "value":0
+            },
+            {
+                "type":"String",
+                "value":"Name"
+            },
+            {
+                "type":"String",
+                "value":"#DESCRIBE markup Language pass 1"
+            }
+        ]
+    }
+}

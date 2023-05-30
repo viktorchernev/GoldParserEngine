@@ -1,0 +1,57 @@
+"Name"    = 'Commandline argument parsing grammar'
+"Version" = '0.1 BETA 2003-09-28'
+"Author"  = 'Alex K. Angelopoulos, alexangelopoulos@hotmail.com'
+"About"   = 'Designed to be similar to the parsing performed by WScript.'
+
+"Case Sensitive" = 'False'
+"Auto Whitespace" = 'False'
+"Character Mapping" = 'ANSI'
+"Start Symbol" = <Commandline>
+
+
+!!!  CHARACTER SETS  !!!
+
+{WS} = {Whitespace} - {CR} - {LF}
+
+{Quoted Chars} = {Printable} - ["]
+
+{NameChars} = {AlphaNumeric} + ['?']
+{Bare Chars} = {NameChars} + ['%$\@_()*.:{}"|!^&*-+~=<>#']
+{BareInitialChar} = {AlphaNumeric} + ['%$\@_()*.{}|!^&*+?~<>#''']
+{BooleanChars} = ['+-']
+
+!!!  TERMINALS  !!!
+
+Sep = {WS}+
+
+!! Items below are various types of "strings" we see in a file
+Quoted_String = '"' ({Quoted Chars} | '""' )* '"'
+    ! Note our definition which now allows "" to be used as a quote escape
+Unquoted_String = {BareInitialChar} {Bare Chars}*
+BooleanValue = {BooleanChars}
+NewLine = {CR}{LF} | {CR}
+Delimiter = ':'
+OptionFlag = '/'
+
+!!!  RULES  !!!
+
+<Name> ::= OptionFlag Unquoted_String
+
+
+<String> ::= Unquoted_String
+           | Quoted_String
+
+
+<Named> ::= <Name> Delimiter <String>
+          | <Name> BooleanValue
+          | <Name>
+
+<Argument> ::= <String> | <Named> 
+
+
+<Arguments> ::= <Argument> Sep <Arguments> 
+          | <Argument>
+
+
+<Commandline> ::= <Arguments> NewLine 
+          | <Arguments>
